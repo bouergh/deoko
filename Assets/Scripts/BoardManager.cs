@@ -12,7 +12,7 @@ namespace Completed
 
         void Awake()
         {
-            SetupScene(1);
+            SetupScene(5);
         }
 
         // Using Serializable allows us to embed a class with sub properties in the inspector.
