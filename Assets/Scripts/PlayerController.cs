@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (!isDead ()) {
+		if (!IsDead ()) {
 			fireTimer = Mathf.Max (fireTimer - Time.fixedDeltaTime, 0f);
 
 			// Movement routine
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour {
 
 			// Shooting routine
 			if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
-				shotBullet ();
+				ShotBullet ();
 		}
     }
 
@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-	private void shotBullet()
+	private void ShotBullet()
 	{
 		float shotHorizontal = Input.GetAxis("HorizontalShot");
 		float shotVertical = Input.GetAxis("VerticalShot");
@@ -75,12 +75,12 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private void takeDamage(int damage)
+	public void TakeDamage(int damage)
 	{
-		if (!isDead()) {
+		if (!IsDead()) {
 			life = Mathf.Max (life - damage, 0);
 
-			if (isDead()) { //si ce dégât vient de nous tuer
+			if (IsDead()) { //si ce dégât vient de nous tuer
 				GetComponent<Rigidbody2D> ().velocity = Vector2.zero; //on arrête de bouger
 				//animation de la mort
 				anim.SetTrigger ("death");
@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private bool isDead()
+	private bool IsDead()
 	{
 		return life <= 0;
 	}

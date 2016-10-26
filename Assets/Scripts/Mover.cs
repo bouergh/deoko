@@ -27,8 +27,8 @@ public class Mover : MonoBehaviour {
 
         if (other.tag == "Player" && origin != "Player")
         {
-            Destroy(other.gameObject);
-            Destroy(gameObject);    //replace by "TakeDamage"
+            other.GetComponent<PlayerController>().TakeDamage(10);
+            Destroy(this.gameObject);
         }
 
         if (other.tag == "Wall")
