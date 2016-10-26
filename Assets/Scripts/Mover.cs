@@ -3,8 +3,10 @@ using System.Collections;
 
 public class Mover : MonoBehaviour {
 
+    //these variables are set by instance which instantiates the projectile
     public Vector2 direction;
     public float speed;
+    public string origin;   //make it some enum ?
 
 	// Use this for initialization
 	void Start () {
@@ -15,12 +17,18 @@ public class Mover : MonoBehaviour {
         GetComponent<Rigidbody2D>().velocity = direction * speed;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other) // à modifier dans le cas où le projectile est envoyé par un ennemi ? ou faire autre script ?
     {
-        if (other.tag == "Enemy")
+        if (other.tag == "Enemy" && origin != "Enemy")
         {
             Destroy(other.gameObject);
-            Destroy(gameObject);
+            Destroy(gameObject);    //replace by "TakeDamage"
+        }
+
+        if (other.tag == "Player" && origin != "Player")
+        {
+            Destroy(other.gameObject);
+            Destroy(gameObject);    //replace by "TakeDamage"
         }
 
         if (other.tag == "Wall")

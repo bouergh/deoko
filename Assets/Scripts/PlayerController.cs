@@ -2,14 +2,20 @@
 using System.Collections;
 
 public class PlayerController : MonoBehaviour {
-
-    public float speed;
-    public GameObject shot;
-    public float fireRate;
+    [SerializeField]
+    private float speed;
+    [SerializeField]
+    private GameObject shot;
+    [SerializeField]
+    private float fireRate;
     private float fireTimer;
+    [SerializeField]
+    private float projectSpeed;
 
-	// Use this for initialization
-	void Start () {
+
+
+    // Use this for initialization
+    void Start () {
         fireTimer = fireRate;
 	}
 	
@@ -33,8 +39,28 @@ public class PlayerController : MonoBehaviour {
         {
             GameObject shotFired = (GameObject)Instantiate(shot, transform.position, transform.rotation);
             shotFired.GetComponent<Mover>().direction = direction;
+            shotFired.GetComponent<Mover>().speed = projectSpeed;
+            shotFired.GetComponent<Mover>().origin = "Player";
             fireTimer = fireRate;
         }
-        
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Enemy")        //catches if enemy is close enough to stop and make damage
+        {
+            other.GetComponentInParent<EnemyScript>().TouchPlayer(true);
+        }
+    }
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "Enemy")
+        {
+            other.GetComponentInParent<EnemyScript>().TouchPlayer(false);
+        }
     }
 }
+
+/*Remarque et idées futures :
+ * Il faudrait bouger le joueur grâce à la physique du jeu sinon ça fout la merde ? oupa ? cf Isaac
+ * */
