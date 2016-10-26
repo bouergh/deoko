@@ -13,9 +13,11 @@ public class PlayerController : MonoBehaviour {
     private float fireTimer;
     [SerializeField]
     private float projectSpeed;
+    [SerializeField]
+    private int damage;
 
-    
-	private Animator anim;
+
+    private Animator anim;
 
 	// Use this for initialization
 	void Start () {
@@ -26,14 +28,12 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (!IsDead ()) {
+		if (!IsDead())
+        {
 			fireTimer = Mathf.Max (fireTimer - Time.fixedDeltaTime, 0f);
 
-			// Movement routine
-			float moveHorizontal = Input.GetAxis ("Horizontal");
-			float moveVertical = Input.GetAxis ("Vertical");
-			Vector2 movement = new Vector2 (moveHorizontal, moveVertical);
-			GetComponent<Rigidbody2D> ().velocity = movement * speed;
+            // Movement routine
+            Move();
 
 			// Shooting routine
 			if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
@@ -65,9 +65,7 @@ public class PlayerController : MonoBehaviour {
 
 		if (direction != Vector2.zero && fireTimer <= 0) {
 			GameObject shotFired = (GameObject)Instantiate (shot, transform.position, transform.rotation);
-			shotFired.GetComponent<Mover> ().direction = direction;
-            shotFired.GetComponent<Mover>().speed = projectSpeed;
-            shotFired.GetComponent<Mover>().origin = "Player";
+            shotFired.GetComponent<ProjectileScript>().Initialize(direction, projectSpeed, "Player", damage);
             fireTimer = fireRate;
 
 			//déclenchement de l'animation de tir
@@ -75,10 +73,10 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	public void TakeDamage(int damage)
+	public void TakeDamage(int damageTaken)
 	{
 		if (!IsDead()) {
-			life = Mathf.Max (life - damage, 0);
+			life = Mathf.Max (life - damageTaken, 0);
 
 			if (IsDead()) { //si ce dégât vient de nous tuer
 				GetComponent<Rigidbody2D> ().velocity = Vector2.zero; //on arrête de bouger
@@ -92,6 +90,14 @@ public class PlayerController : MonoBehaviour {
 	{
 		return life <= 0;
 	}
+
+    private void Move()
+    {
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
+        GetComponent<Rigidbody2D>().velocity = movement * speed;
+    }
 }
 
 /*Remarque et idées futures :

@@ -22,6 +22,10 @@ public class EnemyScript : MonoBehaviour {
     private float fireTimer;
     [SerializeField]
     private float projectSpeed;
+    [SerializeField]
+    private int damage;
+    [SerializeField]
+    private int life;
 
 
     private enum MoveType
@@ -72,11 +76,8 @@ public class EnemyScript : MonoBehaviour {
 
         if (fireTimer <= 0)
         {
-            print("Shots fired bitch !");
             GameObject shotFired = (GameObject)Instantiate(shot, transform.position, transform.rotation);
-            shotFired.GetComponent<Mover>().direction = direction;
-            shotFired.GetComponent<Mover>().speed = projectSpeed;
-            shotFired.GetComponent<Mover>().origin = "Enemy";
+            shotFired.GetComponent<ProjectileScript>().Initialize(direction, projectSpeed, "Enemy", damage);
             fireTimer = fireRate;
         }
     }
@@ -85,8 +86,25 @@ public class EnemyScript : MonoBehaviour {
     {
         closeEnoughToPlayer = value;    //sets variable to know if the player is close enough to take damage
     }
-        
-    
+
+    public void TakeDamage(int damageTaken)
+    {
+        if (!IsDead())
+        {
+            life = Mathf.Max(life - damageTaken, 0);
+
+            if (IsDead())
+            { //si ce dégât vient de nous tuer
+                Destroy(this.gameObject);
+            }
+        }
+    }
+
+    private bool IsDead()
+    {
+        return life <= 0;
+    }
+
 }
 
 /* Remarques/idées :
