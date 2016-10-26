@@ -27,3 +27,5 @@ $RECYCLE.BIN/
 
 Library/*
 Temp/*
+.vs/*
+obj/*
