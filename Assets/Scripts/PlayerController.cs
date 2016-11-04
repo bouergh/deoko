@@ -37,12 +37,14 @@ public class PlayerController : MonoBehaviour {
 				facingRight = !facingRight;
 				transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
 			}
-
-			// Shooting routine
-			if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
-				ShotBullet ();
 		}
     }
+
+	void Update() {
+		// Shooting routine
+		if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
+			ShotBullet ();
+	}
 
     void OnTriggerEnter2D(Collider2D other)
     {
