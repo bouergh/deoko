@@ -4,15 +4,13 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	public int life;
-    [SerializeField]
-    private float speed;
-    [SerializeField]
-    private GameObject shot;
-    [SerializeField]
-    private float fireRate;
+    [SerializeField] private float speed;
+    [SerializeField] private GameObject shot;
+    [SerializeField] private float fireRate;
     private float fireTimer;
-    [SerializeField]
-    private float projectSpeed;
+    [SerializeField] private float projectileSpeed;
+
+	private bool facingRight = true;
 
     
 	private Animator anim;
@@ -33,7 +31,12 @@ public class PlayerController : MonoBehaviour {
 			float moveHorizontal = Input.GetAxis ("Horizontal");
 			float moveVertical = Input.GetAxis ("Vertical");
 			Vector2 movement = new Vector2 (moveHorizontal, moveVertical);
+			anim.SetFloat("walkSpeed", Vector2.Distance(Vector2.zero, movement));
 			GetComponent<Rigidbody2D> ().velocity = movement * speed;
+			if ((facingRight && moveHorizontal < 0) || (!facingRight && moveHorizontal > 0)) {
+				facingRight = !facingRight;
+				transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+			}
 
 			// Shooting routine
 			if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
@@ -66,7 +69,7 @@ public class PlayerController : MonoBehaviour {
 		if (direction != Vector2.zero && fireTimer <= 0) {
 			GameObject shotFired = (GameObject)Instantiate (shot, transform.position, transform.rotation);
 			shotFired.GetComponent<Mover> ().direction = direction;
-            shotFired.GetComponent<Mover>().speed = projectSpeed;
+            shotFired.GetComponent<Mover>().speed = projectileSpeed;
             shotFired.GetComponent<Mover>().origin = "Player";
             fireTimer = fireRate;
 
