@@ -3,30 +3,20 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	public int life;
+	[SerializeField] private int life;
     [SerializeField] private float speed;
-    [SerializeField] private GameObject shot;
-    [SerializeField] private float fireRate;
-    private float fireTimer;
-    [SerializeField] private float projectileSpeed;
-
 	private bool facingRight = true;
-
     
 	private Animator anim;
 
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator>();
-        fireTimer = fireRate;
-		life = 100;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (!IsDead ()) {
-			fireTimer = Mathf.Max (fireTimer - Time.fixedDeltaTime, 0f);
-
 			// Movement routine
 			float moveHorizontal = Input.GetAxis ("Horizontal");
 			float moveVertical = Input.GetAxis ("Vertical");
@@ -39,12 +29,6 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
     }
-
-	void Update() {
-		// Shooting routine
-		if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
-			ShotBullet ();
-	}
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -60,25 +44,6 @@ public class PlayerController : MonoBehaviour {
             other.GetComponentInParent<EnemyScript>().TouchPlayer(false);
         }
     }
-
-	private void ShotBullet()
-	{
-		float shotHorizontal = Input.GetAxis("HorizontalShot");
-		float shotVertical = Input.GetAxis("VerticalShot");
-		Vector2 direction = new Vector2(shotHorizontal, shotVertical);
-		direction.Normalize();
-
-		if (direction != Vector2.zero && fireTimer <= 0) {
-			GameObject shotFired = (GameObject)Instantiate (shot, transform.position, transform.rotation);
-			shotFired.GetComponent<Mover> ().direction = direction;
-            shotFired.GetComponent<Mover>().speed = projectileSpeed;
-            shotFired.GetComponent<Mover>().origin = "Player";
-            fireTimer = fireRate;
-
-			//déclenchement de l'animation de tir
-			anim.SetTrigger ("fire");
-		}
-	}
 
 	public void TakeDamage(int damage)
 	{
