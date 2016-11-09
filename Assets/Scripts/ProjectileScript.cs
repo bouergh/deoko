@@ -4,10 +4,10 @@ using System.Collections;
 public class ProjectileScript : MonoBehaviour {
 
     //these variables are set by instance which instantiates the projectile
-    public Vector2 direction;
-    public float speed;
-    public string origin;   //make it some enum ?
-    public int damage;
+    private Vector2 direction;
+	[SerializeField] private float speed;
+    private string origin;
+	[SerializeField] private int damage;
 
 	// Use this for initialization
 	void Start () {
@@ -39,11 +39,9 @@ public class ProjectileScript : MonoBehaviour {
     }
 
     //when a projectile is instantiated, this script is associated and we call this function to initialize projectile parameters
-    public void Initialize(Vector2 direction, float speed, string origin, int damage)
+    public void Initialize(Vector2 direction, string origin)
     {
         this.direction = direction;
-        this.speed = speed;
         this.origin = origin;
-        this.damage = damage;
     }
 }

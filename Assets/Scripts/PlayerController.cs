@@ -3,41 +3,22 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	public int life;
-    [SerializeField]
-    private float speed;
-    [SerializeField]
-    private GameObject shot;
-    [SerializeField]
-    private float fireRate;
-    private float fireTimer;
-    [SerializeField]
-    private float projectSpeed;
-    [SerializeField]
-    private int damage;
-
-
-    private Animator anim;
+	[SerializeField] private int life;
+    [SerializeField] private float speed;
+	private bool facingRight = true;
+    
+	private Animator anim;
 
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator>();
-        fireTimer = fireRate;
-		life = 100;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (!IsDead())
         {
-			fireTimer = Mathf.Max (fireTimer - Time.fixedDeltaTime, 0f);
-
-            // Movement routine
-            Move();
-
-			// Shooting routine
-			if (Input.GetAxis ("HorizontalShot") != 0 || Input.GetAxis ("VerticalShot") != 0)
-				ShotBullet ();
+            Move(); // Movement routine
 		}
     }
 
@@ -55,23 +36,6 @@ public class PlayerController : MonoBehaviour {
             other.GetComponentInParent<EnemyScript>().TouchPlayer(false);
         }
     }
-
-	private void ShotBullet()
-	{
-		float shotHorizontal = Input.GetAxis("HorizontalShot");
-		float shotVertical = Input.GetAxis("VerticalShot");
-		Vector2 direction = new Vector2(shotHorizontal, shotVertical);
-		direction.Normalize();
-
-		if (direction != Vector2.zero && fireTimer <= 0) {
-			GameObject shotFired = (GameObject)Instantiate (shot, transform.position, transform.rotation);
-            shotFired.GetComponent<ProjectileScript>().Initialize(direction, projectSpeed, "Player", damage);
-            fireTimer = fireRate;
-
-			//déclenchement de l'animation de tir
-			anim.SetTrigger ("fire");
-		}
-	}
 
 	public void TakeDamage(int damageTaken)
 	{
@@ -93,10 +57,15 @@ public class PlayerController : MonoBehaviour {
 
     private void Move()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
-        GetComponent<Rigidbody2D>().velocity = movement * speed;
+        float moveHorizontal = Input.GetAxis ("Horizontal");
+		float moveVertical = Input.GetAxis ("Vertical");
+		Vector2 movement = new Vector2 (moveHorizontal, moveVertical);
+		anim.SetFloat("walkSpeed", Vector2.Distance(Vector2.zero, movement));
+		GetComponent<Rigidbody2D> ().velocity = movement * speed;
+		if ((facingRight && moveHorizontal < 0) || (!facingRight && moveHorizontal > 0)) {
+			facingRight = !facingRight;
+			transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+		}
     }
 }
 

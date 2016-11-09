@@ -4,28 +4,16 @@ using System.Collections;
 public class EnemyScript : MonoBehaviour {
 
     //variables communes
-    [SerializeField]
     private GameObject player;
-    [SerializeField]
-    private GameObject shot;
-
+    [SerializeField] private GameObject projectile;
 
     //variables changeant en fonction du type d'ennemi
-    [SerializeField]
-    private MoveType moveType;  //how the enemy moves
-    [SerializeField]
-    private float speed;        //the speed at which he moves
-    [SerializeField]
-    private bool closeEnoughToPlayer;  //the minimum distance he can approach the player if moving (depends on both colliders ?!)
-    [SerializeField]
-    private float fireRate;  //the minimum distance he can approach the player if moving (depends on both colliders ?!)
-    private float fireTimer;
-    [SerializeField]
-    private float projectSpeed;
-    [SerializeField]
-    private int damage;
-    [SerializeField]
-    private int life;
+    [SerializeField] private MoveType moveType;  //how the enemy moves
+    [SerializeField] private float speed;        //the speed at which he moves
+    private bool closeEnoughToPlayer;  			 //the minimum distance he can approach the player if moving (depends on both colliders ?!)
+    [SerializeField] private int life;
+	[SerializeField] private float fireRate;
+	private bool shooting = false;
 
 
     private enum MoveType
@@ -40,13 +28,12 @@ public class EnemyScript : MonoBehaviour {
 	void Awake () {
         player = GameObject.Find("Player");
         moveType = MoveType.closeToPlayer;
-        fireTimer = fireRate;
 	}
 	
 	void FixedUpdate () {
         Move();
-        Shoot();
-        fireTimer -= Time.fixedDeltaTime;
+		if (!shooting)
+			StartCoroutine(Shoot());
 	}
 
     void Move()
@@ -71,15 +58,14 @@ public class EnemyScript : MonoBehaviour {
 
     // enemy shoots toward player at his maximum rate
     // need to implement raycast to make it realistic
-    void Shoot(){
-        Vector2 direction = (player.transform.position - transform.position).normalized;
+    IEnumerator Shoot(){
+		shooting = true;
+		Vector2 direction = (player.transform.position - transform.position).normalized;
+		GameObject shotFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
+        shotFired.GetComponent<ProjectileScript>().Initialize(direction, "Enemy");
 
-        if (fireTimer <= 0)
-        {
-            GameObject shotFired = (GameObject)Instantiate(shot, transform.position, transform.rotation);
-            shotFired.GetComponent<ProjectileScript>().Initialize(direction, projectSpeed, "Enemy", damage);
-            fireTimer = fireRate;
-        }
+		yield return new WaitForSeconds (fireRate);
+		shooting = false;
     }
 
     public void TouchPlayer(bool value)
