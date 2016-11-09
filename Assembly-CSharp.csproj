@@ -48,7 +48,6 @@
      <Compile Include="Assets\Scripts\Character\Character.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\EnemyController.cs" />
      <Compile Include="Assets\Scripts\Character\Player\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\Character\Player\PlayerShootController.cs" />
      <Compile Include="Assets\Scripts\Level\BoardManager.cs" />
      <Compile Include="Assets\Scripts\Projectiles\ProjectileController.cs" />
  <Reference Include="UnityEngine.UI">

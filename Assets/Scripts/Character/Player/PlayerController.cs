@@ -1,26 +1,55 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : Character {
 
-	[SerializeField] private int life;
-    [SerializeField] private float speed;
-	private bool facingRight = true;
-    
-	private Animator anim;
+	[SerializeField] private GameObject sightsPrefab;
+	[SerializeField] private GameObject projectilePrefab;
+	private GameObject sights;
+	private bool shooting = false;
+	[SerializeField] private float fireRate;
 
-	// Use this for initialization
-	void Start () {
-		anim = GetComponent<Animator>();
+	void Start() {
+		base.Start ();
+		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
 	}
-	
+
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (!IsDead())
-        {
-            Move(); // Movement routine
+		if (!base.IsDead ()) {
+			// move routine
+			float moveHorizontal = Input.GetAxis ("Horizontal");
+			float moveVertical = Input.GetAxis ("Vertical");
+			Vector2 direction = new Vector2 (moveHorizontal, moveVertical);
+			base.Move (direction);
+
+			// Shoot routine
+			if (Input.GetMouseButton (0) && !shooting)
+				StartCoroutine (ShootBullet ());
 		}
     }
+
+	void Update () { 
+		// Sight indicator update
+		Vector2 mousePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition); // get the real mouse position
+		sights.transform.position = new Vector2(transform.position.x, transform.position.y) + (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized * 2;
+		sights.transform.localScale = transform.localScale;
+	}
+
+	IEnumerator ShootBullet()
+	{
+		shooting = true;
+
+		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, transform.position, transform.rotation);
+		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, "Player");
+
+		//déclenchement de l'animation de tir
+		base.PlayAnim(animType.shoot);
+
+		yield return new WaitForSeconds (fireRate);
+		shooting = false;
+	}
+
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -36,37 +65,6 @@ public class PlayerController : MonoBehaviour {
 			other.GetComponentInParent<EnemyController>().TouchPlayer(false);
         }
     }
-
-	virtual public void TakeDamage(int damageTaken)
-	{
-		if (!IsDead()) {
-			life = Mathf.Max (life - damageTaken, 0);
-
-			if (IsDead()) { //si ce dégât vient de nous tuer
-				GetComponent<Rigidbody2D> ().velocity = Vector2.zero; //on arrête de bouger
-				if (anim != null)
-					anim.SetTrigger ("death"); //animation de la mort
-			}
-		}
-	}
-
-	private bool IsDead()
-	{
-		return life <= 0;
-	}
-
-	private void Move()
-	{
-		Vector2 direction = Vector2.zero;
-		if (anim != null)
-			anim.SetFloat("walkSpeed", Vector2.Distance(Vector2.zero, direction));
-
-		GetComponent<Rigidbody2D> ().velocity = direction * speed;
-		if ((facingRight && direction.x < 0) || (!facingRight && direction.x > 0)) {
-			facingRight = !facingRight;
-			transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
-		}
-	}
 }
 
 /*Remarque et idées futures :
