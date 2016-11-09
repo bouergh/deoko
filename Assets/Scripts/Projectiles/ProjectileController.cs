@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ProjectileScript : MonoBehaviour {
+public class ProjectileController : MonoBehaviour {
 
     //these variables are set by instance which instantiates the projectile
     private Vector2 direction;
@@ -22,7 +22,7 @@ public class ProjectileScript : MonoBehaviour {
     {
         if (other.tag == "Enemy" && origin != "Enemy")
         {
-            other.GetComponent<EnemyScript>().TakeDamage(damage);
+            other.GetComponent<EnemyController>().TakeDamage(damage);
             Destroy(this.gameObject);
         }
 

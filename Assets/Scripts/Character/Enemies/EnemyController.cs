@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyScript : MonoBehaviour {
+public class EnemyController : MonoBehaviour {
 
     //variables communes
     private GameObject player;
@@ -62,7 +62,7 @@ public class EnemyScript : MonoBehaviour {
 		shooting = true;
 		Vector2 direction = (player.transform.position - transform.position).normalized;
 		GameObject shotFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
-        shotFired.GetComponent<ProjectileScript>().Initialize(direction, "Enemy");
+        shotFired.GetComponent<ProjectileController>().Initialize(direction, "Enemy");
 
 		yield return new WaitForSeconds (fireRate);
 		shooting = false;

@@ -45,11 +45,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\BoardManager.cs" />
-     <Compile Include="Assets\Scripts\EnemyScript.cs" />
-     <Compile Include="Assets\Scripts\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\PlayerShootController.cs" />
-     <Compile Include="Assets\Scripts\ProjectileScript.cs" />
+     <Compile Include="Assets\Scripts\Character\Character.cs" />
+     <Compile Include="Assets\Scripts\Character\Enemies\EnemyController.cs" />
+     <Compile Include="Assets\Scripts\Character\Player\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\Character\Player\PlayerShootController.cs" />
+     <Compile Include="Assets\Scripts\Level\BoardManager.cs" />
+     <Compile Include="Assets\Scripts\Projectiles\ProjectileController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

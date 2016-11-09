@@ -35,7 +35,7 @@ public class PlayerShootController : MonoBehaviour {
 		shooting = true;
 
 		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, transform.position, transform.rotation);
-		shotFired.GetComponent<ProjectileScript> ().Initialize (sights.transform.position - transform.position, "Player");
+		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, "Player");
 
 		//déclenchement de l'animation de tir
 		anim.SetTrigger ("fire");
