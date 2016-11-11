@@ -9,7 +9,7 @@ public class Character : MonoBehaviour{
 	private Animator anim;
 	public enum animType {death = 0, shoot, walk};
 
-	protected void Start() {
+	virtual protected void Start() {
 		anim = GetComponent<Animator>();
 	}
 
@@ -21,6 +21,10 @@ public class Character : MonoBehaviour{
 			if (IsDead()) { //si ce dégât vient de nous tuer
 				GetComponent<Rigidbody2D> ().velocity = Vector2.zero; //on arrête de bouger
 				PlayAnim(animType.death);
+                if(tag != "Player")
+                {
+                    Destroy(this.gameObject);
+                }
 			}
 		}
 	}

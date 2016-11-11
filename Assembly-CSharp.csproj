@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{AD0A3A54-5668-4890-1B1F-3A207E40D7EE}</ProjectGuid>
+    <ProjectGuid>{C3DA89E1-70C6-7D6C-993E-C8F831D35880}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -47,6 +47,8 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Character\Character.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\EnemyController.cs" />
+     <Compile Include="Assets\Scripts\Character\Enemies\RungunController.cs" />
+     <Compile Include="Assets\Scripts\Character\Enemies\ThugController.cs" />
      <Compile Include="Assets\Scripts\Character\Player\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Level\BoardManager.cs" />
      <Compile Include="Assets\Scripts\Projectiles\ProjectileController.cs" />
