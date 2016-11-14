@@ -20,22 +20,25 @@ public class ProjectileController : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy" && origin != "Enemy")
+        if (!other.isTrigger)   //we don't want to touch enemy by touching is aggro zone but only its physical collider
         {
-            other.GetComponent<EnemyController>().TakeDamage(damage);
-            Destroy(this.gameObject);
-        }
+            if (other.tag == "Enemy" && origin != "Enemy")
+            {
+                other.GetComponent<EnemyController>().TakeDamage(damage);
+                Destroy(this.gameObject);
+            }
 
-        if (other.tag == "Player" && origin != "Player")
-        {
-            other.GetComponent<PlayerController>().TakeDamage(damage);
-            Destroy(this.gameObject);
-        }
+            if (other.tag == "Player" && origin != "Player")
+            {
+                other.GetComponent<PlayerController>().TakeDamage(damage);
+                Destroy(this.gameObject);
+            }
 
-        if (other.tag == "Wall")
-        {
-            Destroy(gameObject);
-        }
+            if (other.tag == "Wall")
+            {
+                Destroy(gameObject);
+            }
+        }        
     }
 
     //when a projectile is instantiated, this script is associated and we call this function to initialize projectile parameters

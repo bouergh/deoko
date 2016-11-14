@@ -9,7 +9,7 @@ public class PlayerController : Character {
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
 
-	void Start() {
+	protected override void Start() {
 		base.Start ();
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
 	}
@@ -49,22 +49,6 @@ public class PlayerController : Character {
 		yield return new WaitForSeconds (fireRate);
 		shooting = false;
 	}
-
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if(other.tag == "Enemy")        //catches if enemy is close enough to stop and make damage
-        {
-            other.GetComponentInParent<EnemyController>().TouchPlayer(true);
-        }
-    }
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "Enemy")
-        {
-			other.GetComponentInParent<EnemyController>().TouchPlayer(false);
-        }
-    }
 }
 
 /*Remarque et idées futures :
