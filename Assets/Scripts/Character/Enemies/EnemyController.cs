@@ -72,7 +72,7 @@ public class EnemyController : Character {
         if(hit.collider)  //signifie qu'il y a un mur entre le joueur et l'ennemi qui veut tirer
         {
             direction = Vector2.zero;
-        }
+        }// pas encore parfait comme les murs sont carrés et que le joueur a une box cheloue
         return direction;
     }
     

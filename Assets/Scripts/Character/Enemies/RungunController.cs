@@ -40,7 +40,6 @@ public class RungunController : EnemyController {
          * la zone d'aggro serait plus petite que la zone de suivi, c'est à dire que le
          * joueur doit s'éloigner encore plus pour semer l'ennemi qu'il n'avait dû s'approcher
          * pour que ce dernier commence à le suivre
-         * Faire Raycasts pour éviter que l'ennemi tire dans les murs
          * */
         
     }

@@ -46,8 +46,10 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Character\Character.cs" />
+     <Compile Include="Assets\Scripts\Character\Enemies\AimTurretController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\EnemyController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\RungunController.cs" />
+     <Compile Include="Assets\Scripts\Character\Enemies\SniperController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\ThugController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\ToxicController.cs" />
      <Compile Include="Assets\Scripts\Character\Player\PlayerController.cs" />
