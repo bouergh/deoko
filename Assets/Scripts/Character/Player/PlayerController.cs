@@ -9,6 +9,7 @@ public class PlayerController : Character {
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
 
+
 	void Start() {
 		base.Start ();
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
@@ -34,13 +35,17 @@ public class PlayerController : Character {
 		Vector2 mousePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition); // get the real mouse position
 		sights.transform.position = new Vector2(transform.position.x, transform.position.y) + (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized * 2;
 		sights.transform.localScale = transform.localScale;
+
+		if ((FacingRight && sights.transform.position.x < transform.position.x) || (!FacingRight && sights.transform.position.x > transform.position.x)) {
+			base.Flip ();
+		}
 	}
 
 	IEnumerator ShootBullet()
 	{
 		shooting = true;
 
-		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, transform.position, transform.rotation);
+		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, (transform.position + sights.transform.position) / 2, transform.rotation);
 		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, "Player");
 
 		//déclenchement de l'animation de tir

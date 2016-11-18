@@ -4,10 +4,16 @@ using System.Collections;
 public class Character : MonoBehaviour{
 	[SerializeField] private int life;
 	[SerializeField] private float speed;
-	private bool facingRight = true;
 
 	private Animator anim;
 	public enum animType {death = 0, shoot, walk};
+
+	private bool facingRight = true;
+	public bool FacingRight {
+		get { return facingRight; }
+		set { facingRight = value; }
+	}
+
 
 	virtual protected void Start() {
 		anim = GetComponent<Animator>();
@@ -36,12 +42,15 @@ public class Character : MonoBehaviour{
 
 	protected void Move(Vector2 direction)
 	{
+		float walkSpeed = ((facingRight && direction.x >= 0) || (!facingRight && direction.x <= 0)) ? direction.magnitude : direction.magnitude * -1;
+		PlayAnim(animType.walk, walkSpeed);
+
 		GetComponent<Rigidbody2D> ().velocity = direction * speed;
-		if ((facingRight && direction.x < 0) || (!facingRight && direction.x > 0)) {
-			facingRight = !facingRight;
-			transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
-		}
-		PlayAnim(animType.walk, Vector2.Distance(Vector2.zero, direction));
+	}
+
+	protected void Flip() {
+		facingRight = !facingRight;
+		transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
 	}
 
 	protected void PlayAnim(animType animationType, float parameter = 0f) {
