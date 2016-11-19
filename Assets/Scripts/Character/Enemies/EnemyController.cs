@@ -53,28 +53,15 @@ public class EnemyController : Character {
     }
 
     // enemy shoots toward player at his maximum rate
-    // need to implement raycast to make it realistic
     protected IEnumerator Shoot(Vector2 direction){
 		shooting = true;
 		GameObject shotFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
-        //marche pas bien mais faudrait : shotFired.transform.parent = gameObject.transform;
-        shotFired.GetComponent<ProjectileController>().Initialize(direction, "Enemy");
-
-		yield return new WaitForSeconds (fireRate);
+        shotFired.GetComponent<ProjectileController>().Initialize(direction, gameObject);
+        yield return new WaitForSeconds (fireRate);
 		shooting = false;
     }
 
-    protected IEnumerator Laser(Vector2 direction)
-    {
-        shooting = true;
-        GameObject laserFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
-        //marche pas bien mais faudrait : laserFired.transform.parent = gameObject.transform;
-        laserFired.GetComponent<LaserController>().Initialize(direction, "Enemy", transform.position);
-        yield return new WaitForSeconds(fireRate);
-        shooting = false;
-        Destroy(laserFired);
-    }
-
+    // raycasts to check for visual on player or not, gives his direction
     protected Vector2 Aim()
     {
         Vector2 shootLine = player.transform.position - transform.position;

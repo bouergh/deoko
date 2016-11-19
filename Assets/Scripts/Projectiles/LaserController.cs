@@ -1,13 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LaserController : MonoBehaviour {
+public class LaserController : ProjectileController {
 
-    //these variables are set by instance which instantiates the projectile
-    private Vector2 direction;
-    private string origin;
-    [SerializeField]
-    private int damage;
     //no speed, the laser is instant ! (for the moment)
     LineRenderer line;
     private Vector2 position; //till we use parent !
@@ -18,6 +13,7 @@ public class LaserController : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        position = origin.transform.position;
         RaycastHit2D hit = Physics2D.Raycast(position, direction, Mathf.Infinity, hitMask);
         line = GetComponent<LineRenderer>();
         line.enabled = true;
@@ -36,20 +32,11 @@ public class LaserController : MonoBehaviour {
             hit.transform.GetComponent<PlayerController>().TakeDamage(damage);
         }
     }
-    
-
-    //when a projectile is instantiated, this script is associated and we call this function to initialize projectile parameters
-    public void Initialize(Vector2 direction, string origin, Vector2 position)
-    {
-        this.direction = direction;
-        this.origin = origin;
-        this.position = position;
-    }
 
     void OnDestroy()
     {
         RaycastHit2D hit = Physics2D.Raycast(position, direction);
-        if(hit.collider.tag == "Player")
+        if(hit && hit.collider.tag == "Player")
         {
             hit.collider.GetComponent<PlayerController>().TakeDamage(damage);
         }

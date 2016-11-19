@@ -10,13 +10,13 @@ public class BulletController : ProjectileController{
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.isTrigger && other.tag == "Enemy" && origin != "Enemy")  //enemy has trigger collider for range detection so we only check non-trigger colliders
+        if (!other.isTrigger && other.tag == "Enemy" && origin.tag != "Enemy")  //enemy has trigger collider for range detection so we only check non-trigger colliders
         {
             other.GetComponent<EnemyController>().TakeDamage(damage);
             Destroy(this.gameObject);
         }
 
-        if (other.tag == "Player" && origin != "Player")
+        if (other.tag == "Player" && origin.tag != "Player")
         {
             other.GetComponent<PlayerController>().TakeDamage(damage);
             Destroy(this.gameObject);

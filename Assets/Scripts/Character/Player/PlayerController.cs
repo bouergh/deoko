@@ -41,7 +41,7 @@ public class PlayerController : Character {
 		shooting = true;
 
 		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, transform.position, transform.rotation);
-		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, "Player");
+		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, gameObject);    //répercussion de la modification des projectiles
 
 		//déclenchement de l'animation de tir
 		base.PlayAnim(animType.shoot);
