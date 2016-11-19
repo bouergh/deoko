@@ -57,10 +57,22 @@ public class EnemyController : Character {
     protected IEnumerator Shoot(Vector2 direction){
 		shooting = true;
 		GameObject shotFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
+        //marche pas bien mais faudrait : shotFired.transform.parent = gameObject.transform;
         shotFired.GetComponent<ProjectileController>().Initialize(direction, "Enemy");
 
 		yield return new WaitForSeconds (fireRate);
 		shooting = false;
+    }
+
+    protected IEnumerator Laser(Vector2 direction)
+    {
+        shooting = true;
+        GameObject laserFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
+        //marche pas bien mais faudrait : laserFired.transform.parent = gameObject.transform;
+        laserFired.GetComponent<LaserController>().Initialize(direction, "Enemy", transform.position);
+        yield return new WaitForSeconds(fireRate);
+        shooting = false;
+        Destroy(laserFired);
     }
 
     protected Vector2 Aim()
@@ -68,7 +80,7 @@ public class EnemyController : Character {
         Vector2 shootLine = player.transform.position - transform.position;
         Vector2 direction = shootLine.normalized;
         float distance = shootLine.magnitude;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, hitMask); //layerMask 9 is "Physics" for all players, ennemies and walls
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, hitMask);
         if(hit.collider)  //signifie qu'il y a un mur entre le joueur et l'ennemi qui veut tirer
         {
             direction = Vector2.zero;
@@ -93,5 +105,4 @@ public class EnemyController : Character {
             Debug.Log(triggerCounter);
         }
     }
-
 }

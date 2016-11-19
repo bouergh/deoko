@@ -31,7 +31,7 @@ public class SniperController : EnemyController {
             Vector2 direction = Aim();
             if(direction != Vector2.zero)
             {
-                StartCoroutine(Shoot(direction));
+                StartCoroutine(Laser(direction));
             }
         }
     }
