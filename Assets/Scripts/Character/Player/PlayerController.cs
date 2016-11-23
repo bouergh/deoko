@@ -13,6 +13,7 @@ public class PlayerController : Character {
 	protected override void Start() {
 		base.Start ();
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
+		sights.transform.parent = transform;
 	}
 
 	// Update is called once per frame

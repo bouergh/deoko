@@ -28,7 +28,7 @@ public class EnemyController : Character {
 	override protected void Start () {
         base.Start();
         triggerCounter = 0;
-        player = GameObject.Find("Player");
+		player = GameObject.FindGameObjectWithTag("Player");
 	}
 
     protected void MoveEnemy()
