@@ -10,7 +10,7 @@ public class PlayerController : Character {
 	[SerializeField] private float fireRate;
 
 
-	void Start() {
+	protected override void Start() {
 		base.Start ();
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
 	}
@@ -44,9 +44,9 @@ public class PlayerController : Character {
 	IEnumerator ShootBullet()
 	{
 		shooting = true;
+		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, transform.position, transform.rotation);
+		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, gameObject);    //répercussion de la modification des projectiles
 
-		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, (transform.position + sights.transform.position) / 2, transform.rotation);
-		shotFired.GetComponent<ProjectileController> ().Initialize (sights.transform.position - transform.position, "Player");
 
 		//déclenchement de l'animation de tir
 		base.PlayAnim(animType.shoot);
@@ -54,22 +54,6 @@ public class PlayerController : Character {
 		yield return new WaitForSeconds (fireRate);
 		shooting = false;
 	}
-
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if(other.tag == "Enemy")        //catches if enemy is close enough to stop and make damage
-        {
-            other.GetComponentInParent<EnemyController>().TouchPlayer(true);
-        }
-    }
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "Enemy")
-        {
-			other.GetComponentInParent<EnemyController>().TouchPlayer(false);
-        }
-    }
 }
 
 /*Remarque et idées futures :

@@ -4,17 +4,17 @@ using System.Collections;
 public class EnemyController : Character {
 
     //variables communes
-    private GameObject player;
+    protected GameObject player;
     [SerializeField] private GameObject projectile;
 
     //variables changeant en fonction du type d'ennemi
     protected MoveType moveType;  //how the enemy moves
-    //[SerializeField] private float speed;        //the speed at which he moves
-    private bool closeEnoughToPlayer;  			 //the minimum distance he can approach the player if moving (depends on both colliders ?!)
-    //[SerializeField] private int life;
 	[SerializeField] private float fireRate;
 	protected bool shooting = false;
+    protected int triggerCounter;   //counter to know in which collider player has actually entered
+    [SerializeField] protected int meleeDamage;      //damage done in melee or via poison
 
+    [SerializeField] LayerMask hitMask;
 
     protected enum MoveType
     {
@@ -27,6 +27,7 @@ public class EnemyController : Character {
     
 	override protected void Start () {
         base.Start();
+        triggerCounter = 0;
         player = GameObject.Find("Player");
 	}
 
@@ -35,11 +36,7 @@ public class EnemyController : Character {
         switch (moveType)
         {
             case MoveType.closeToPlayer:
-                if (!closeEnoughToPlayer)
-                {
-                    //transform.position = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.fixedDeltaTime);
-                    Move((player.transform.position - transform.position).normalized);
-                }
+                Move((player.transform.position - transform.position).normalized);
                 break;
 
             case MoveType.still:
@@ -50,27 +47,49 @@ public class EnemyController : Character {
                 break;
         }
     }
+    protected void StopMoving()
+    {
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+    }
 
     // enemy shoots toward player at his maximum rate
-    // need to implement raycast to make it realistic
     protected IEnumerator Shoot(Vector2 direction){
 		shooting = true;
 		GameObject shotFired = (GameObject)Instantiate(projectile, transform.position, transform.rotation);
-        shotFired.GetComponent<ProjectileController>().Initialize(direction, "Enemy");
-
-		yield return new WaitForSeconds (fireRate);
+        shotFired.GetComponent<ProjectileController>().Initialize(direction, gameObject);
+        yield return new WaitForSeconds (fireRate);
 		shooting = false;
     }
 
+    // raycasts to check for visual on player or not, gives his direction
     protected Vector2 Aim()
     {
-        Vector2 direction = (player.transform.position - transform.position).normalized;
+        Vector2 shootLine = player.transform.position - transform.position;
+        Vector2 direction = shootLine.normalized;
+        float distance = shootLine.magnitude;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, hitMask);
+        if(hit.collider)  //signifie qu'il y a un mur entre le joueur et l'ennemi qui veut tirer
+        {
+            direction = Vector2.zero;
+        }// pas encore parfait comme les murs sont carrés et que le joueur a une box cheloue
         return direction;
     }
-
-    public void TouchPlayer(bool value)
+    
+    //modify trigger counter so that we know in which collider player is at this moment
+    protected virtual void OnTriggerEnter2D(Collider2D other)
     {
-        closeEnoughToPlayer = value;    //sets variable to know if the player is close enough to take damage
+        if(other.tag == "Player" && !other.isTrigger)
+        {
+            triggerCounter++;
+            Debug.Log(triggerCounter);
+        }
     }
-
+    protected virtual void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "Player" && !other.isTrigger)
+        {
+            triggerCounter--;
+            Debug.Log(triggerCounter);
+        }
+    }
 }
