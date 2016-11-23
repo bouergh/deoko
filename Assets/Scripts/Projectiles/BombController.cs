@@ -73,5 +73,7 @@ public class BombController : ProjectileController {
      * il faudrait enlever la partie avec l'objet enfant,
      * puisque on fera la détection du joueur lors de l'explosion avec Physics2D.OverlapCircle,
      * et l'explosion (et donc visuel de la portée de la bombe) avec une animation du GameObject ORIGINAL
+     * Il faut aussi faire en sorte qu'exploRadius et le visuel correspondent, et bien définir ce qui peut être touché
+     * chez le joueur (hitbox) pour que ça soit logique, propre et "logique"
      *  */
 }
