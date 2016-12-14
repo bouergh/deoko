@@ -17,9 +17,11 @@ public class PlayerController : Character {
 	[SerializeField] private float fireRate;
 
     private int keyNum = 0;
-    private int powNum = 0;
-    [SerializeField] private int maxPowNum = 100;    //max number of power-ups you can stack
 
+    //systeme de power-ups
+    private int powNum = 0;
+    [SerializeField] private static int maxPowNum = 100;    //max number of power-ups you can stack
+    [SerializeField] private int healFactor = 10;    //life you heal when picking up a power-up (yellow shuriken)
 
 	protected override void Start() {
 		base.Start ();
@@ -33,8 +35,7 @@ public class PlayerController : Character {
 
 	public override void TakeDamage(int damageTaken) {
 		base.TakeDamage (damageTaken);
-		//updates the life bar in the UI
-		lifeBarUIMaskRect.sizeDelta = new Vector2((getLife() * lifeBarWidth.x) / totalLife, lifeBarWidth.y);
+        UpdateLifeBar();
 	}
 
 	// Update is called once per frame
@@ -77,6 +78,12 @@ public class PlayerController : Character {
 		shooting = false;
 	}
 
+    private void UpdateLifeBar()
+    {
+        //updates the life bar in the UI
+        lifeBarUIMaskRect.sizeDelta = new Vector2((getLife() * lifeBarWidth.x) / totalLife, lifeBarWidth.y);
+    }
+
     public bool ChangeKey(int num)
     {
         bool keysLeft = (keyNum > 0);   //to know if we can open a door
@@ -93,12 +100,37 @@ public class PlayerController : Character {
 
     private void ApplyPowerup(int num)
     {
-        switch (num)
+        //prendre un power-up soigne
+        life += healFactor;
+        UpdateLifeBar();
+
+        switch (num)    //ici il faut changer quelques caractéristiques du perso quand son nombre de power-ups atteint des nombres particuliers
         {
             case 0:         //no power-ups
                 break;
+
+            case 10:
+                //donne une nouvelle attaque de corps-à-corps p.ex
+                break;
+
+            case 20:
+                //change l'attaque au shuriken, genre en lance 3 ou quoi
+                break;
+
+            case 30:    //ou plutôt maxPowNum*3/10 -> non !
+                //confère une "attaque ultime" avec plus gros cooldown, permettant d'envoyer des shurikens partout p.ex
+                break;
+
+            //etc etc
+
+            case 100: //ou plutôt maxPowNum ?? embêtant car un switch-case ne peut prendre que des constantes !
+                //toute puissance du perso car max de powerUp
+                break;
+
             default:
                 break;
         }
     }
+
+
 }

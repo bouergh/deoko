@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Character : MonoBehaviour{
-	[SerializeField] private int life;
+	[SerializeField] protected int life;
 	[SerializeField] private float speed;
 
 	private Animator anim;
