@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerController : Character {
@@ -7,15 +9,18 @@ public class PlayerController : Character {
 	[SerializeField] private GameObject sightsPrefab;
 	[SerializeField] private GameObject projectilePrefab;
 
-	//barre de vie
+	//Elements d'UI
 	private RectTransform lifeBarUIMaskRect;
 	private Vector2 lifeBarWidth;
 	private int totalLife;
+	private Text PowerUpsUICount;
+	private Text KeysUICount;
 
 	private GameObject sights;
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
 
+	//systeme de clés
     private int keyNum = 0;
 
     //systeme de power-ups
@@ -23,19 +28,36 @@ public class PlayerController : Character {
     [SerializeField] private static int maxPowNum = 100;    //max number of power-ups you can stack
     [SerializeField] private int healFactor = 10;    //life you heal when picking up a power-up (yellow shuriken)
 
+
 	protected override void Start() {
 		base.Start ();
+
+		//initialisation des objets du UI
+		try {
+			InitUIObjects ();
+		}catch(NullReferenceException e){}
+
+		//création de l'objet de visée
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
 		sights.transform.parent = transform;
+	}
 
-		lifeBarUIMaskRect = GameObject.Find("UI canvas/LifeBar/mask").GetComponent<RectTransform>();
+	private void InitUIObjects() {
+		//barre de vie
+		lifeBarUIMaskRect = GameObject.Find ("UI canvas/LifeBar/mask").GetComponent<RectTransform> ();
 		lifeBarWidth = lifeBarUIMaskRect.sizeDelta;
 		totalLife = getLife ();
+
+		//powerups count
+		PowerUpsUICount = GameObject.Find ("UI canvas/Powerups/Text").GetComponent<Text>();
+
+		//powerups count
+		KeysUICount = GameObject.Find ("UI canvas/Keys/Text").GetComponent<Text>();
 	}
 
 	public override void TakeDamage(int damageTaken) {
 		base.TakeDamage (damageTaken);
-        UpdateLifeBar();
+        UpdateUI();
 	}
 
 	// Update is called once per frame
@@ -78,10 +100,14 @@ public class PlayerController : Character {
 		shooting = false;
 	}
 
-    private void UpdateLifeBar()
+    private void UpdateUI()
     {
-        //updates the life bar in the UI
+        //updates the life bar
         lifeBarUIMaskRect.sizeDelta = new Vector2((getLife() * lifeBarWidth.x) / totalLife, lifeBarWidth.y);
+		//updates the powerups count
+		PowerUpsUICount.text = "x " + powNum.ToString();
+		//updates the keys count
+		KeysUICount.text = "x " + keyNum.ToString();
     }
 
     public bool ChangeKey(int num)
@@ -102,7 +128,7 @@ public class PlayerController : Character {
     {
         //prendre un power-up soigne
         life += healFactor;
-        UpdateLifeBar();
+        UpdateUI();
 
         switch (num)    //ici il faut changer quelques caractéristiques du perso quand son nombre de power-ups atteint des nombres particuliers
         {
