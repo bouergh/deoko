@@ -18,7 +18,7 @@ public class PlayerController : Character {
 
     private int keyNum = 0;
     private int powNum = 0;
-    [SerializeField] private int maxPowNum = 10;    //max number of power-ups you can stack
+    [SerializeField] private int maxPowNum = 100;    //max number of power-ups you can stack
 
 
 	protected override void Start() {
@@ -86,7 +86,19 @@ public class PlayerController : Character {
 
     public void ChangePowerup(int num)
     {
-        powNum += num;
-        Mathf.Clamp(powNum, 0, maxPowNum);
+        powNum += num;                      //
+        Mathf.Clamp(powNum, 0, maxPowNum);  //nombre de power-ups compris entre le max défini et 0
+        ApplyPowerup(powNum);               //applique la modification des stats/pouvoirs du joueur selon le nombre de power-ups collectés
+    }
+
+    private void ApplyPowerup(int num)
+    {
+        switch (num)
+        {
+            case 0:         //no power-ups
+                break;
+            default:
+                break;
+        }
     }
 }
