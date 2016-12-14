@@ -16,6 +16,10 @@ public class PlayerController : Character {
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
 
+    private int keyNum = 0;
+    private int powNum = 0;
+    [SerializeField] private int maxPowNum = 10;    //max number of power-ups you can stack
+
 
 	protected override void Start() {
 		base.Start ();
@@ -72,8 +76,17 @@ public class PlayerController : Character {
 		yield return new WaitForSeconds (fireRate);
 		shooting = false;
 	}
-}
 
-/*Remarque et idées futures :
- * Il faudrait bouger le joueur grâce à la physique du jeu sinon ça fout la merde ? oupa ? cf Isaac
- * */
+    public bool ChangeKey(int num)
+    {
+        bool keysLeft = (keyNum > 0);   //to know if we can open a door
+        keyNum = Mathf.Max(0, keyNum + num); //adds num to keyNum, can't go to less than 0
+        return keysLeft;                // if true, we'll have reduced number of keys and opened a door
+    }
+
+    public void ChangePowerup(int num)
+    {
+        powNum += num;
+        Mathf.Clamp(powNum, 0, maxPowNum);
+    }
+}

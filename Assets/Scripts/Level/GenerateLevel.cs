@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
-public class EnnemyClass 
+public class EnemyClass 
 {
-	public GameObject Basic;
+    public GameObject RunGun;
 	public GameObject Toxic;
+    public GameObject AimTurret;
+    public GameObject Sniper;
+    public GameObject Tazman;
 }
 
 [System.Serializable]
@@ -19,7 +22,8 @@ public class TileClass
 	public GameObject Exit;
 	public GameObject Key;
 	public GameObject Lock;
-	public EnnemyClass Ennemies;
+    public GameObject PowerUp;
+	public EnemyClass Enemies;
 }
 
 
@@ -29,7 +33,7 @@ public class GenerateLevel : MonoBehaviour{
 
 	private Transform levelContainer;
 	private Transform objectsContainer;
-	private Transform ennemiesContainer;
+	private Transform enemiesContainer;
 
 	/* Dictionnaire des relations string -> préfab.
 	 * Exemple d'une entrée du dictionnaire : "W" -> (levelContainer, prefabs.Floor)
@@ -42,7 +46,7 @@ public class GenerateLevel : MonoBehaviour{
 	void Start() {
 		levelContainer = new GameObject("Level").transform;
 		objectsContainer = new GameObject("Power-ups").transform;
-		ennemiesContainer = new GameObject("Ennemies").transform;
+		enemiesContainer = new GameObject("Enemies").transform;
 
 		relation = new Dictionary<string, KeyValuePair<Transform, GameObject>>() 
 		{
@@ -54,16 +58,20 @@ public class GenerateLevel : MonoBehaviour{
 			{ "W", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Wall)},
 			{ "B", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.OuterWall)},
 			{ "F", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Exit)},
-			{ "L", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Lock)},
 
 			// objects (including player and power-ups)
-			{ "P", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Player)},
+			{ "L", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Lock)},
+            { "P", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Player)},
 			{ "K", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Key)},
+            { "U", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.PowerUp) },
 
 			// ennemies
-			{ "E1", new KeyValuePair<Transform, GameObject>(ennemiesContainer, prefabs.Ennemies.Basic)},
-			{ "E2", new KeyValuePair<Transform, GameObject>(ennemiesContainer, prefabs.Ennemies.Toxic)},
-		};
+			{ "E1", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.RunGun)},
+			{ "E2", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.Toxic)},
+            { "E3", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.AimTurret)},
+            { "E4", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.Sniper)},
+            { "E5", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.Tazman)},
+        };
 
 		MakeLevel ();
 	}
@@ -75,17 +83,17 @@ public class GenerateLevel : MonoBehaviour{
 			for (int j = 0; j < row.Length; ++j) {
 				try {
 					GameObject instance = null;
-					KeyValuePair<Transform, GameObject> toInstanciate = relation [level [i] [j]];
+					KeyValuePair<Transform, GameObject> toInstantiate = relation [level [i] [j]];
 
 					//si l'objet à instancier est un objet ou un ennemi, on ajoute une tuile de sol par dessous
-					if (toInstanciate.Key == objectsContainer || toInstanciate.Key == ennemiesContainer) {
+					if (toInstantiate.Key == objectsContainer || toInstantiate.Key == enemiesContainer) {
 						instance = (GameObject)Instantiate (prefabs.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
 						instance.transform.parent = levelContainer;
 					}
 
 					//ajout de l'objet sur la scène
-					if (toInstanciate.Value != null) { //si on doit instancier quelque chose
-						instance = (GameObject)Instantiate (toInstanciate.Value, new Vector3 (j, -i, 0f), Quaternion.identity);
+					if (toInstantiate.Value != null) { //si on doit instancier quelque chose
+						instance = (GameObject)Instantiate (toInstantiate.Value, new Vector3 (j, -i, 0f), Quaternion.identity);
 						instance.transform.parent = relation [level [i] [j]].Key;
 					}
 				}
