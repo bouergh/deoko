@@ -29,6 +29,7 @@ public class TileClass
 
 public class GenerateLevel : MonoBehaviour{
 	[SerializeField] private TextAsset levelToLoad;
+	[SerializeField] private GameObject UICanvas;
 	[SerializeField] private TileClass prefabs;
 
 	private Transform levelContainer;
@@ -73,7 +74,14 @@ public class GenerateLevel : MonoBehaviour{
             { "E5", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.Tazman)},
         };
 
+		CreateUICanavs ();
 		MakeLevel ();
+	}
+
+
+	public void CreateUICanavs() {
+		GameObject canvas = (GameObject)Instantiate (UICanvas, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+		canvas.name = "UI canvas";
 	}
 
 	public void MakeLevel() {
