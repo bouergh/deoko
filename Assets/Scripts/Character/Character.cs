@@ -70,4 +70,8 @@ public class Character : MonoBehaviour{
 			}
 		}
 	}
+
+	public int getLife() {
+		return life;
+	}
 }

@@ -3,8 +3,15 @@ using System.Collections;
 
 public class PlayerController : Character {
 
+	//viseur et projectiles
 	[SerializeField] private GameObject sightsPrefab;
 	[SerializeField] private GameObject projectilePrefab;
+
+	//barre de vie
+	private RectTransform lifeBarUIMaskRect;
+	private Vector2 lifeBarWidth;
+	private int totalLife;
+
 	private GameObject sights;
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
@@ -14,6 +21,16 @@ public class PlayerController : Character {
 		base.Start ();
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
 		sights.transform.parent = transform;
+
+		lifeBarUIMaskRect = GameObject.Find("UI canvas/LifeBar/mask").GetComponent<RectTransform>();
+		lifeBarWidth = lifeBarUIMaskRect.sizeDelta;
+		totalLife = getLife ();
+	}
+
+	public override void TakeDamage(int damageTaken) {
+		base.TakeDamage (damageTaken);
+		//updates the life bar in the UI
+		lifeBarUIMaskRect.sizeDelta = new Vector2((getLife() * lifeBarWidth.x) / totalLife, lifeBarWidth.y);
 	}
 
 	// Update is called once per frame
