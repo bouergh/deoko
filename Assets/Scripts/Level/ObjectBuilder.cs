@@ -14,17 +14,30 @@ public class EnemyClass
 }
 
 [System.Serializable]
-public class TileClass 
+public class TerrainClass 
 {
-	public GameObject Player;
 	public GameObject Floor;
 	public GameObject Wall;
 	public GameObject OuterWall;
 	public GameObject Exit;
+}
+
+[System.Serializable]
+public class ObjectClass
+{
 	public GameObject Key;
 	public GameObject Lock;
-    public GameObject PowerUp;
+	public GameObject PowerUp;
+	public GameObject Food;
+}
+
+[System.Serializable]
+public class TileClass 
+{
+	public GameObject Player;
+	public TerrainClass Terrain;
 	public EnemyClass Enemies;
+	public ObjectClass Objects;
 }
 
 
@@ -60,15 +73,16 @@ public class ObjectBuilder : MonoBehaviour{
 			{ "P", new KeyValuePair<Transform, GameObject>(null, null)},
 
 			// level
-			{ "G", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Floor)},
-			{ "W", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Wall)},
-			{ "B", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.OuterWall)},
-			{ "F", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Exit)},
+			{ "G", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Terrain.Floor)},
+			{ "W", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Terrain.Wall)},
+			{ "B", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Terrain.OuterWall)},
+			{ "F", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Terrain.Exit)},
 
 			// objects
-			{ "L", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Lock)},
-			{ "K", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Key)},
-            { "U", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.PowerUp) },
+			{ "L", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Objects.Lock)},
+			{ "K", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Objects.Key)},
+			{ "U", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Objects.PowerUp) },
+			{ "N", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Objects.Food) },
 
 			// ennemies
 			{ "E1", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.RunGun)},
@@ -102,7 +116,7 @@ public class ObjectBuilder : MonoBehaviour{
 
 					//si l'objet à instancier n'est pas un élément de décors, on ajoute une tuile de sol par dessous
 					if (toInstantiate.Key != levelContainer && toInstantiate.Key != null) {
-						instance = (GameObject)Instantiate (prefabs.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
+						instance = (GameObject)Instantiate (prefabs.Terrain.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
 						instance.transform.parent = levelContainer;
 					}
 
@@ -115,7 +129,7 @@ public class ObjectBuilder : MonoBehaviour{
 					//cas spécial du joueur : on le place aux coordonnées correspondantes (le gameobject du joueur existe déjà)
 					if (level [i] [j] == playerCode) {
 						//tuile de sol à la position courante
-						instance = (GameObject)Instantiate (prefabs.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
+						instance = (GameObject)Instantiate (prefabs.Terrain.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
 						instance.transform.parent = levelContainer;
 						//déplacement du joueur
 						GameObject.Find (PlayerGameObjectName).transform.position = new Vector3(j, -i, 0f);

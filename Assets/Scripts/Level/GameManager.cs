@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
 	[SerializeField] private GameObject deathScreen;
 
 	private ObjectBuilder builder;
-	private FileInfo[] levelsList;
+	private string[] levelsList;
 	private int currentLevel;
 	private bool playerDead;
 
@@ -21,7 +21,11 @@ public class GameManager : MonoBehaviour {
 
 		//Get the levels list
 		DirectoryInfo directoryInfo = new DirectoryInfo (Application.dataPath + "/Levels/");
-		levelsList = directoryInfo.GetFiles("lvl???.csv");
+		FileInfo[] fileInfo = directoryInfo.GetFiles("lvl???.csv");
+		levelsList = new string[fileInfo.Length];
+		for (int i = 0; i < fileInfo.Length; i++) {
+			levelsList [i] = fileInfo [i].FullName;
+		}
 		Array.Sort (levelsList);
 
 		Debug.Log ("found " + levelsList.Length + " levels !");
@@ -38,7 +42,8 @@ public class GameManager : MonoBehaviour {
 	
 	public void LoadNextLevel() {
 		if (currentLevel < levelsList.Length) {
-			builder.BuildLevel (levelsList [currentLevel].FullName);
+			builder.DestroyCurrentLevel ();
+			builder.BuildLevel (levelsList [currentLevel]);
 			currentLevel++;
 		} else {
 			FinishGame ();
