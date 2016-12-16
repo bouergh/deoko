@@ -58,7 +58,12 @@ public class PlayerController : Character {
 	public override void TakeDamage(int damageTaken) {
 		base.TakeDamage (damageTaken);
         UpdateUI();
+		if (IsDead ()) {
+			GameObject.Find ("BoardManager").GetComponent<GameManager> ().ShowDeathScreen ();
+		}
 	}
+
+
 
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -76,13 +81,15 @@ public class PlayerController : Character {
     }
 
 	void Update () { 
-		// Sight indicator update
-		Vector2 mousePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition); // get the real mouse position
-		sights.transform.position = new Vector2(transform.position.x, transform.position.y) + (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized * 2;
-		sights.transform.localScale = transform.localScale;
+		if (!base.IsDead ()) {
+			// Sight indicator update
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition); // get the real mouse position
+			sights.transform.position = new Vector2 (transform.position.x, transform.position.y) + (mousePosition - new Vector2 (transform.position.x, transform.position.y)).normalized * 2;
+			sights.transform.localScale = transform.localScale;
 
-		if ((FacingRight && sights.transform.position.x < transform.position.x) || (!FacingRight && sights.transform.position.x > transform.position.x)) {
-			base.Flip ();
+			if ((FacingRight && sights.transform.position.x < transform.position.x) || (!FacingRight && sights.transform.position.x > transform.position.x)) {
+				base.Flip ();
+			}
 		}
 	}
 

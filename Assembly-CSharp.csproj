@@ -67,6 +67,7 @@
      <Compile Include="Assets\Scripts\Projectiles\BulletController.cs" />
      <Compile Include="Assets\Scripts\Projectiles\LaserController.cs" />
      <Compile Include="Assets\Scripts\Projectiles\ProjectileController.cs" />
+     <Compile Include="Assets\Scripts\UI\InputController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
