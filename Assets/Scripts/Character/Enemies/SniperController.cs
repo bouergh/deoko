@@ -17,19 +17,37 @@ public class SniperController : EnemyController {
 
     void FixedUpdate() 
     {
-        if (triggerCounter > 0 && triggerCounter < 3 && !shooting)   //checks aggro zone, second member replace "Touch" with player
+        //sa spécificité est qu'il arrête de bouger quand il tire !
+        BaseBehaviour();
+    }
+
+    protected override void BaseBehaviour()
+    {
+        if (Aggro())            //only gains aggro when inside the specific aggro zone (second from the exterior) and seeing the player (raycast)
         {
-            MoveEnemy();
+            follow = true;
+        }
+
+        if (triggerCounter < 1) //only loses aggro when out of the external zone
+        {
+            follow = false;
+        }
+
+        //won't move if shooting... spécificité du perso !
+        if (triggerCounter < 4 && follow && !shooting)    //if has aggro and not too close, will move toward player
+        {
+            MoveEnemy();    //should replace this with a more intelligent pathfinding or chose for each enemy !
         }
         else
         {
             StopMoving();   //else the enemy will continue in the same direction after losing aggro !
         }
-        if (triggerCounter > 1 && !shooting)   //checks shooting zone
+
+        if (triggerCounter > 2 && !shooting)   //checks shooting zone
         {
-            StopMoving();
+            StopMoving(); //(spécificité du sniper !)
             Vector2 direction = Aim();
-            if(direction != Vector2.zero)
+            if (direction != Vector2.zero)
             {
                 StartCoroutine(Shoot(direction));
             }

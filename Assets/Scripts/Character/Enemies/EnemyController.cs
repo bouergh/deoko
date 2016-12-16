@@ -88,7 +88,6 @@ public class EnemyController : Character {
         if(other.tag == "Player" && !other.isTrigger)
         {
             triggerCounter++;
-            Debug.Log(triggerCounter);
         }
     }
     protected virtual void OnTriggerExit2D(Collider2D other)
@@ -96,7 +95,6 @@ public class EnemyController : Character {
         if (other.tag == "Player" && !other.isTrigger)
         {
             triggerCounter--;
-            Debug.Log(triggerCounter);
         }
     }
 
@@ -104,7 +102,7 @@ public class EnemyController : Character {
      * bien configurer MoveType et les trigger collider pour que cette fonction 
      * s'applique à tous les types d'ennemis
      *  */
-    protected void BaseBehaviour()  
+    protected virtual void BaseBehaviour()  
     {
         if (Aggro())            //only gains aggro when inside the specific aggro zone (second from the exterior) and seeing the player (raycast)
         {
@@ -125,7 +123,7 @@ public class EnemyController : Character {
             StopMoving();   //else the enemy will continue in the same direction after losing aggro !
         }
 
-        if (triggerCounter > 2 && !shooting)   //checks shooting zone
+        if (triggerCounter > 2 && !shooting && projectile)   //checks shooting zone
         {
             Vector2 direction = Aim();
             if (direction != Vector2.zero)
