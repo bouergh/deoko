@@ -1,11 +1,14 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Level\CSVReader.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Character\Player\PlayerController.cs">
     <Files>
-      <File FileName="Assets\Scripts\Level\CSVReader.cs" Line="9" Column="3" />
-      <File FileName="Assets\Scripts\Level\ObjectBuilder.cs" Line="95" Column="83" />
-      <File FileName="Assets\Scripts\Level\GameManager.cs" Line="35" Column="60" />
-      <File FileName="Assets\Scripts\Level\ExitController.cs" Line="11" Column="79" />
+      <File FileName="Assets\Scripts\Level\CSVReader.cs" Line="13" Column="4" />
+      <File FileName="Assets\Scripts\Level\ObjectBuilder.cs" Line="117" Column="44" />
+      <File FileName="Assets\Scripts\Level\GameManager.cs" Line="55" Column="30" />
+      <File FileName="Assets\Scripts\Character\Character.cs" Line="56" Column="18" />
+      <File FileName="Assets\Scripts\Character\Player\PlayerController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Character\Enemies\EnemyController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\UI\InputController.cs" Line="8" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
