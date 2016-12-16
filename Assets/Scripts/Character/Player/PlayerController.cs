@@ -7,7 +7,7 @@ public class PlayerController : Character {
 
 	//viseur et projectiles
 	[SerializeField] private GameObject sightsPrefab;
-	[SerializeField] private GameObject projectilePrefab;
+	private GameObject projectilePrefab;
 
 	//Elements d'UI
 	private RectTransform lifeBarUIMaskRect;
@@ -16,9 +16,14 @@ public class PlayerController : Character {
 	private Text PowerUpsUICount;
 	private Text KeysUICount;
 
+    //shooting
 	private GameObject sights;
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
+
+    //slashing
+    private bool slashing = false;
+    [SerializeField]  private float slashRate;
 
 	//systeme de clés
     private int keyNum = 0;
@@ -26,11 +31,25 @@ public class PlayerController : Character {
     //systeme de power-ups
     private int powNum = 0;
     [SerializeField] private static int maxPowNum = 100;    //max number of power-ups you can stack
-    [SerializeField] private int healFactor = 10;    //life you heal when picking up a power-up (yellow shuriken)
+    [SerializeField] private int healFactor = 10;    //life you heal when picking up a power-up (yellow shuriken on ground)
+    [SerializeField] private GameObject shuriken1;
+    [SerializeField] private GameObject shuriken2;
+    [SerializeField] private GameObject shuriken3;
+    private bool canShurikenStorm = false;
+    private bool canSuperNinja = false;
 
+    //shuriken storm
+    private bool shurikenStorming = false;
+    [SerializeField] private float shurikenStormCooldown;
 
-	protected override void Start() {
+    //super ninja
+    private bool superNinjing = false;
+    [SerializeField] private float superNinjaCooldown;
+
+    protected override void Start() {
 		base.Start ();
+
+        projectilePrefab = shuriken1;
 
 		//initialisation des objets du UI
 		try {
@@ -75,8 +94,14 @@ public class PlayerController : Character {
 			base.Move (direction);
 
 			// Shoot routine
-			if (Input.GetMouseButton (0) && !shooting)
+			if (Input.GetButton ("Shoot") && !shooting)
 				StartCoroutine (ShootBullet ());
+
+            // Katana routine
+            if(Input.GetButton("Slash") && !slashing)
+            {
+                StartCoroutine(Katana());
+            }
 		}
     }
 
@@ -137,33 +162,68 @@ public class PlayerController : Character {
         life += healFactor;
         UpdateUI();
 
-        switch (num)    //ici il faut changer quelques caractéristiques du perso quand son nombre de power-ups atteint des nombres particuliers
+        //milestones are 0, 5, 10, 15, 20 for the moment
+        if (num < 5)    //no power-ups
         {
-            case 0:         //no power-ups
-                break;
-
-            case 10:
-                //donne une nouvelle attaque de corps-à-corps p.ex
-                break;
-
-            case 20:
-                //change l'attaque au shuriken, genre en lance 3 ou quoi
-                break;
-
-            case 30:    //ou plutôt maxPowNum*3/10 -> non !
-                //confère une "attaque ultime" avec plus gros cooldown, permettant d'envoyer des shurikens partout p.ex
-                break;
-
-            //etc etc
-
-            case 100: //ou plutôt maxPowNum ?? embêtant car un switch-case ne peut prendre que des constantes !
-                //toute puissance du perso car max de powerUp
-                break;
-
-            default:
-                break;
+            canShurikenStorm = false;
+            canSuperNinja = false;
+            projectilePrefab = shuriken1;
+        }
+        else if (num < 10)  
+        {
+            canShurikenStorm = true;    //confère une "attaque ultime" avec plus gros cooldown, permettant d'envoyer des shurikens partout
+            canSuperNinja = false;
+            projectilePrefab = shuriken1;
+        }
+        else if (num < 15)  
+        {
+            canShurikenStorm = true;
+            canSuperNinja = false;
+            projectilePrefab = shuriken2;   //changement de shuriken -> rouge
+        }
+        else if (num < 20)  
+        {
+            canShurikenStorm = true;
+            canSuperNinja = true;   //confère un buff de vitesse et fireRate temporaire à activer comme deuxième attaque ultime
+            projectilePrefab = shuriken2;
+        }
+        else  
+        {
+            canShurikenStorm = true;
+            canSuperNinja = true;
+            projectilePrefab = shuriken3;   //changement de shuriken -> or
         }
     }
 
+    IEnumerator Katana()    //attaque de CaC
+    {
+        slashing = true;
+        //do something !
+        Debug.Log("coup de KATANA !");
+        yield return new WaitForSeconds(slashRate);
+        slashing = false;
+    }
 
+    IEnumerator ShurikenStorm()    //tourbillon de shuriken
+    {
+        shurikenStorming = true;
+        //do something !
+        Debug.Log("ShurikenSTOOOOOOORM !");
+        yield return new WaitForSeconds(shurikenStormCooldown); //fonctionne actuellement avec cooldown, il faudrait peut être changer pour éviter les abus
+        shurikenStorming = false;
+    }
+
+    IEnumerator SuperNinja()   //buff de déplacement et cadence de tir temporaire
+    {
+        superNinjing = true;
+        //do something !
+        Debug.Log("SupeeeeeeeerNINJA !");
+        yield return new WaitForSeconds(superNinjaCooldown);    //fonctionne actuellement avec cooldown, il faudrait peut être changer pour éviter les abus
+        superNinjing = false;
+    }
+
+//si on garde le déblocage d'attaques spéciales et le cooldown pour les lancer, il faudrait donner un intérêt au temps
+//genre high score = temps
+//ou alors les ennemis peuvent survivre à une attaque spéciale, et régénèrent leur vie si on sort de leur zone d'aggro
+//il faudrait qu'on ait la pression des ennemis pour que le cooldown soit une bonne mécanique (mais on garde pour le futur car c'est une bonne mécanique)
 }

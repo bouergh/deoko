@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{1F851B04-AC66-25FD-A0E2-F570FBA28BC8}</ProjectGuid>
+    <ProjectGuid>{C3DA89E1-70C6-7D6C-993E-C8F831D35880}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -46,12 +46,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Character\Character.cs" />
-     <Compile Include="Assets\Scripts\Character\Enemies\AimTurretController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\EnemyController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\RungunController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\SniperController.cs" />
-     <Compile Include="Assets\Scripts\Character\Enemies\Tazman.cs" />
-     <Compile Include="Assets\Scripts\Character\Enemies\ThugController.cs" />
      <Compile Include="Assets\Scripts\Character\Enemies\ToxicController.cs" />
      <Compile Include="Assets\Scripts\Character\Player\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Level\CSVReader.cs" />
