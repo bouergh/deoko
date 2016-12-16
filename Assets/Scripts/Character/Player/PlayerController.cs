@@ -12,7 +12,6 @@ public class PlayerController : Character {
 	//Elements d'UI
 	private RectTransform lifeBarUIMaskRect;
 	private Vector2 lifeBarWidth;
-	private int totalLife;
 	private Text PowerUpsUICount;
 	private Text KeysUICount;
 
@@ -21,8 +20,7 @@ public class PlayerController : Character {
 	private bool shooting = false;
 	[SerializeField] private float fireRate;
 
-    //slashing
-    private bool slashing = false;
+    //katana
     [SerializeField]  private float slashRate;
 
 	//systeme de clés
@@ -45,11 +43,10 @@ public class PlayerController : Character {
     //super ninja
     private bool superNinjing = false;
     [SerializeField] private float superNinjaCooldown;
+    [SerializeField] private float superNinjaTime;
 
     protected override void Start() {
 		base.Start ();
-
-        projectilePrefab = shuriken1;
 
 		//initialisation des objets du UI
 		try {
@@ -59,13 +56,14 @@ public class PlayerController : Character {
 		//création de l'objet de visée
 		sights = (GameObject)Instantiate (sightsPrefab, transform.position, Quaternion.identity);
 		sights.transform.parent = transform;
-	}
+
+        ApplyPowerup(powNum);    //initialize player abilities (default : 0 at spawn)
+    }
 
 	private void InitUIObjects() {
 		//barre de vie
 		lifeBarUIMaskRect = GameObject.Find ("UI canvas/LifeBar/mask").GetComponent<RectTransform> ();
 		lifeBarWidth = lifeBarUIMaskRect.sizeDelta;
-		totalLife = getLife ();
 
 		//powerups count
 		PowerUpsUICount = GameObject.Find ("UI canvas/Powerups/Text").GetComponent<Text>();
@@ -93,11 +91,24 @@ public class PlayerController : Character {
 				StartCoroutine (ShootBullet ());
 
             // Katana routine
-            if(Input.GetButton("Slash") && !slashing)
+            if(Input.GetButton("Slash") && !shooting)
             {
                 StartCoroutine(Katana());
             }
-		}
+
+            // Shuriken Storm routine
+            if (Input.GetButton("Storm") && !shooting && !shurikenStorming)
+            {
+                StartCoroutine(ShurikenStorm());
+            }
+
+            // Super Ninja routine
+            if (Input.GetButton("Super") && !superNinjing)
+            {
+                StartCoroutine(SuperNinja());
+            }
+
+        }
     }
 
 	void Update () { 
@@ -111,7 +122,7 @@ public class PlayerController : Character {
 		}
 	}
 
-	IEnumerator ShootBullet()
+	IEnumerator ShootBullet()   //attention des projectiles traversent les murs ! bien vérifier collisions et colliders des murs !
 	{
 		shooting = true;
 		GameObject shotFired = (GameObject)Instantiate (projectilePrefab, transform.position, transform.rotation);
@@ -128,7 +139,7 @@ public class PlayerController : Character {
     private void UpdateUI()
     {
         //updates the life bar
-        lifeBarUIMaskRect.sizeDelta = new Vector2((getLife() * lifeBarWidth.x) / totalLife, lifeBarWidth.y);
+        lifeBarUIMaskRect.sizeDelta = new Vector2((life * lifeBarWidth.x) / maxLife, lifeBarWidth.y);
 		//updates the powerups count
 		PowerUpsUICount.text = "x " + powNum.ToString();
 		//updates the keys count
@@ -158,9 +169,9 @@ public class PlayerController : Character {
         //milestones are 0, 5, 10, 15, 20 for the moment
         if (num < 5)    //no power-ups
         {
-            canShurikenStorm = false;
-            canSuperNinja = false;
-            projectilePrefab = shuriken1;
+            canShurikenStorm = true;        //val par défaut : false
+            canSuperNinja = true;           //val par défaut : false
+            projectilePrefab = shuriken1;   //attention de bien remettre shuriken1 après les tests
         }
         else if (num < 10)  
         {
@@ -190,18 +201,21 @@ public class PlayerController : Character {
 
     IEnumerator Katana()    //attaque de CaC
     {
-        slashing = true;
+        shooting = true;    //because he can't shuriken/katana/storm at the same time
         //do something !
-        Debug.Log("coup de KATANA !");
+        Debug.Log("RUYJII NO KEN WO KURAE !!!");
         yield return new WaitForSeconds(slashRate);
-        slashing = false;
+        shooting = false;
     }
 
     IEnumerator ShurikenStorm()    //tourbillon de shuriken
     {
-        shurikenStorming = true;
+        shurikenStorming = true;    //there's a cooldown !
+        shooting = true;            //you can't do other attacks before this is finished
         //do something !
         Debug.Log("ShurikenSTOOOOOOORM !");
+        shooting = false;
+
         yield return new WaitForSeconds(shurikenStormCooldown); //fonctionne actuellement avec cooldown, il faudrait peut être changer pour éviter les abus
         shurikenStorming = false;
     }
@@ -211,6 +225,18 @@ public class PlayerController : Character {
         superNinjing = true;
         //do something !
         Debug.Log("SupeeeeeeeerNINJA !");
+
+        speed *= 2; //double speed
+        fireRate /= 2;  //double shooting rate
+        maxLife *= 2;   //shield equal to your maximum life (we you won't really see it...)
+        life = maxLife; // go full HP/shield
+        GetComponentInParent<SpriteRenderer>().color = Color.red;
+        yield return new WaitForSeconds(superNinjaTime);
+
+        speed /= 2;     //theses are OK since we won't change this value anywhere else
+        fireRate *= 2;
+        maxLife /= 2;
+        GetComponentInParent<SpriteRenderer>().color = Color.white;
         yield return new WaitForSeconds(superNinjaCooldown);    //fonctionne actuellement avec cooldown, il faudrait peut être changer pour éviter les abus
         superNinjing = false;
     }

@@ -2,8 +2,9 @@
 using System.Collections;
 
 public class Character : MonoBehaviour{
-	[SerializeField] protected int life;
-	[SerializeField] private float speed;
+    [SerializeField] protected int maxLife;
+    protected int life;
+	[SerializeField] protected float speed;
 
 	private Animator anim;
 	public enum animType {death = 0, shoot, walk};
@@ -17,6 +18,7 @@ public class Character : MonoBehaviour{
 
 	virtual protected void Start() {
 		anim = GetComponent<Animator>();
+        life = maxLife;
 	}
 
 	virtual public void TakeDamage(int damageTaken)
@@ -69,9 +71,5 @@ public class Character : MonoBehaviour{
 				break;
 			}
 		}
-	}
-
-	public int getLife() {
-		return life;
 	}
 }
