@@ -16,12 +16,15 @@ public class EnemyController : Character {
 
     [SerializeField] LayerMask hitMask;
 
+    protected bool follow;
+
     protected enum MoveType
     {
         still,
         horizontal,
         vertical,
         closeToPlayer,
+        toPlayerPathfinding,
         awayFromPlayer
     }
     
@@ -37,6 +40,10 @@ public class EnemyController : Character {
         {
             case MoveType.closeToPlayer:
                 Move((player.transform.position - transform.position).normalized);
+                break;
+
+            case MoveType.toPlayerPathfinding:
+                Debug.Log("I wish I had implemented an A* algorithm :'(");
                 break;
 
             case MoveType.still:
@@ -92,4 +99,45 @@ public class EnemyController : Character {
             Debug.Log(triggerCounter);
         }
     }
+
+    /* gestion des zones d'aggro, du mouvement et des tirs :
+     * bien configurer MoveType et les trigger collider pour que cette fonction 
+     * s'applique à tous les types d'ennemis
+     *  */
+    protected void BaseBehaviour()  
+    {
+        if (Aggro())            //only gains aggro when inside the specific aggro zone (second from the exterior) and seeing the player (raycast)
+        {
+            follow = true;
+        }
+
+        if (triggerCounter < 1) //only loses aggro when out of the external zone
+        {
+            follow = false;
+        }
+
+        if(triggerCounter < 4 && follow)    //if has aggro and not too close, will move toward player
+        {
+            MoveEnemy();    //should replace this with a more intelligent pathfinding or chose for each enemy !
+        }
+        else
+        {
+            StopMoving();   //else the enemy will continue in the same direction after losing aggro !
+        }
+
+        if (triggerCounter > 2 && !shooting)   //checks shooting zone
+        {
+            Vector2 direction = Aim();
+            if (direction != Vector2.zero)
+            {
+                StartCoroutine(Shoot(direction));
+            }
+        }
+    }
+    // aggro marche avec BaseBehaviour, bien configurer les zones !
+    protected bool Aggro()  //gestion de l'aggro par raycast et zone d'aggro
+    {
+        return ((triggerCounter > 1) && Aim() != Vector2.zero);
+    }
+
 }

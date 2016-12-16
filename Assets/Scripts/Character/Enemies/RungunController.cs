@@ -7,6 +7,7 @@ using System.Collections;
  * */
 
 public class RungunController : EnemyController {
+    
 
     override protected void Start()
     {
@@ -16,22 +17,10 @@ public class RungunController : EnemyController {
 
     void FixedUpdate() 
     {
-        if (triggerCounter > 0 && triggerCounter < 3)   //checks aggro zone, second member replace "Touch" with player
-        {
-            MoveEnemy();
-        }
-        else
-        {
-            StopMoving();   //else the enemy will continue in the same direction after losing aggro !
-        }
-        if (triggerCounter > 1 && !shooting)   //checks shooting zone
-        {
-            Vector2 direction = Aim();
-            if(direction != Vector2.zero)
-            {
-                StartCoroutine(Shoot(direction));
-            }
-        }
+
+        BaseBehaviour();
+
+
         
         /* Ce qu'on peut changer :
          * ajouter un cercle concentrique (ou un carré) intérieur pour arrêter de suivre si déjà collé,
