@@ -5,6 +5,7 @@ public class Character : MonoBehaviour{
     [SerializeField] protected int maxLife;
     protected int life;
 	[SerializeField] protected float speed;
+	private GameManager gameManager;
 
 	private Animator anim;
 	public enum animType {death = 0, shoot, walk};
@@ -19,6 +20,7 @@ public class Character : MonoBehaviour{
 	virtual protected void Start() {
 		anim = GetComponent<Animator>();
         life = maxLife;
+		gameManager = GameObject.Find ("BoardManager").GetComponent<GameManager> ();
 	}
 
 	virtual public void TakeDamage(int damageTaken)
@@ -44,10 +46,18 @@ public class Character : MonoBehaviour{
 
 	protected void Move(Vector2 direction)
 	{
-		float walkSpeed = ((facingRight && direction.x >= 0) || (!facingRight && direction.x <= 0)) ? direction.magnitude : direction.magnitude * -1;
-		PlayAnim(animType.walk, walkSpeed);
+		if (!gameManager.isPlayerDead ()) {
+			float walkSpeed = ((facingRight && direction.x >= 0) || (!facingRight && direction.x <= 0)) ? direction.magnitude : direction.magnitude * -1;
+			PlayAnim (animType.walk, walkSpeed);
 
-		GetComponent<Rigidbody2D> ().velocity = direction * speed;
+			GetComponent<Rigidbody2D> ().velocity = direction * speed;
+		} else {
+			GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+			EnemyController ec = GetComponent<EnemyController> ();
+			if (ec != null) {
+				Destroy (ec);
+			}
+		}
 	}
 
 	protected void Flip() {
