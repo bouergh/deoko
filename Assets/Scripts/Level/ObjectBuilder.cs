@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Windows;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -27,8 +28,10 @@ public class TileClass
 }
 
 
-public class GenerateLevel : MonoBehaviour{
-	[SerializeField] private TextAsset levelToLoad;
+public class ObjectBuilder : MonoBehaviour{
+	public string PlayerGameObjectName = "Player";
+	public string UICanvasGameObjectName = "UI canvas";
+
 	[SerializeField] private GameObject UICanvas;
 	[SerializeField] private TileClass prefabs;
 
@@ -41,18 +44,20 @@ public class GenerateLevel : MonoBehaviour{
 	 * - le "W" est la lettre présente dans le fichier CSV
 	 * - le "levelContainer est le container du futur objet généré (pour regrouper les éléments semblables dans l'éditeur Unity)
 	 * - le "prefabs.Floor" est un lien vers le préfab de l'objet */
-	private Dictionary<string, KeyValuePair<Transform, GameObject>> relation;
+	private Dictionary<string, KeyValuePair<Transform, GameObject>> objectCodes;
+	private string playerCode;
 
 	//appelée au lancement
-	void Start() {
+	public void Initialize() {
 		levelContainer = new GameObject("Level").transform;
 		objectsContainer = new GameObject("Power-ups").transform;
 		enemiesContainer = new GameObject("Enemies").transform;
 
-		relation = new Dictionary<string, KeyValuePair<Transform, GameObject>>() 
+		objectCodes = new Dictionary<string, KeyValuePair<Transform, GameObject>>() 
 		{
 			// void
 			{ "", new KeyValuePair<Transform, GameObject>(null, null)},
+			{ "P", new KeyValuePair<Transform, GameObject>(null, null)},
 
 			// level
 			{ "G", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Floor)},
@@ -60,9 +65,8 @@ public class GenerateLevel : MonoBehaviour{
 			{ "B", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.OuterWall)},
 			{ "F", new KeyValuePair<Transform, GameObject>(levelContainer, prefabs.Exit)},
 
-			// objects (including player and power-ups)
+			// objects
 			{ "L", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Lock)},
-            { "P", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Player)},
 			{ "K", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.Key)},
             { "U", new KeyValuePair<Transform, GameObject>(objectsContainer, prefabs.PowerUp) },
 
@@ -73,28 +77,31 @@ public class GenerateLevel : MonoBehaviour{
             { "E4", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.Sniper)},
             { "E5", new KeyValuePair<Transform, GameObject>(enemiesContainer, prefabs.Enemies.Tazman)},
         };
-
-		CreateUICanavs ();
-		MakeLevel ();
+		playerCode = "P";
 	}
 
 
-	public void CreateUICanavs() {
+	public void InstantiateUICanavs() {
 		GameObject canvas = (GameObject)Instantiate (UICanvas, new Vector3 (0f, 0f, 0f), Quaternion.identity);
-		canvas.name = "UI canvas";
+		canvas.name = UICanvasGameObjectName;
 	}
 
-	public void MakeLevel() {
-		string[][] level = CSVReader.SplitCsvGrid (levelToLoad.text);
+	public void InstantiatePlayer() {
+		GameObject player = (GameObject)Instantiate (prefabs.Player, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+		player.name = PlayerGameObjectName;
+	}
+
+	public void BuildLevel(string fileName) {
+		string[][] level = CSVReader.SplitCsvGrid (fileName);
 		for (int i = 0; i < level.Length; ++i) {
 			string[] row = level [i];
 			for (int j = 0; j < row.Length; ++j) {
 				try {
 					GameObject instance = null;
-					KeyValuePair<Transform, GameObject> toInstantiate = relation [level [i] [j]];
+					KeyValuePair<Transform, GameObject> toInstantiate = objectCodes [level [i] [j]];;
 
-					//si l'objet à instancier est un objet ou un ennemi, on ajoute une tuile de sol par dessous
-					if (toInstantiate.Key == objectsContainer || toInstantiate.Key == enemiesContainer) {
+					//si l'objet à instancier n'est pas un élément de décors, on ajoute une tuile de sol par dessous
+					if (toInstantiate.Key != levelContainer && toInstantiate.Key != null) {
 						instance = (GameObject)Instantiate (prefabs.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
 						instance.transform.parent = levelContainer;
 					}
@@ -102,13 +109,34 @@ public class GenerateLevel : MonoBehaviour{
 					//ajout de l'objet sur la scène
 					if (toInstantiate.Value != null) { //si on doit instancier quelque chose
 						instance = (GameObject)Instantiate (toInstantiate.Value, new Vector3 (j, -i, 0f), Quaternion.identity);
-						instance.transform.parent = relation [level [i] [j]].Key;
+						instance.transform.parent = objectCodes [level [i] [j]].Key;
 					}
-				}
-				catch(KeyNotFoundException) {
+
+					//cas spécial du joueur : on le place aux coordonnées correspondantes (le gameobject du joueur existe déjà)
+					if (level [i] [j] == playerCode) {
+						//tuile de sol à la position courante
+						instance = (GameObject)Instantiate (prefabs.Floor, new Vector3 (j, -i, 0f), Quaternion.identity);
+						instance.transform.parent = levelContainer;
+						//déplacement du joueur
+						GameObject.Find (PlayerGameObjectName).transform.position = new Vector3(j, -i, 0f);
+					}
+
+				} catch (KeyNotFoundException) {
 					Debug.Log ("L'objet suivant n'existe pas dans le code : " + level [i] [j]);
 				}
 			}
+		}
+	}
+
+	public void DestroyCurrentLevel() {
+		foreach (Transform child in levelContainer) {
+			Destroy (child.gameObject);
+		}
+		foreach (Transform child in objectsContainer) {
+			Destroy (child.gameObject);
+		}
+		foreach (Transform child in enemiesContainer) {
+			Destroy (child.gameObject);
 		}
 	}
 }
