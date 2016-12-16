@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;
+
 
 public class ExitController : MonoBehaviour {
 
@@ -8,7 +8,7 @@ public class ExitController : MonoBehaviour {
     {
         if(other.tag == "Player")
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+			GameObject.Find ("BoardManager").GetComponent<GameManager> ().LoadNextLevel ();
         }
     }
 }

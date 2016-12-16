@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Linq; 
+using System.IO;
 
 public class CSVReader {
 	// splits a CSV file into an array of array of int
-	static public string[][] SplitCsvGrid(string csvText)
+	static public string[][] SplitCsvGrid(string fileName)
 	{
-		string[] lines = csvText.Split('\n');
+		string[] lines = File.ReadAllLines (fileName);
 
 		string[][] outputGrid = new string[lines.Length][]; 
 		for (int i = 0; i < lines.Length; i++)
